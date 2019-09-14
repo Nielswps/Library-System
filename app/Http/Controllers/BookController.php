@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Book;
+use App\Item;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -43,9 +44,9 @@ class BookController extends Controller
             'writer' => 'required'
         ]);
 
-        $book = new Book();
+        $book = new Item();
         $book->title = $request->input('title');
-        $book->writer = $request->input('writer');
+        $book->setMeta('writer', $request->input('writer'));
         $book->user_id = auth()->user()->id;
 
         $book->save();
@@ -106,7 +107,7 @@ class BookController extends Controller
      */
     public function show($id)
     {
-        $book = Book::find($id);
+        $book = Item::find($id);
         return view('items.books.show')->with('book', $book);
     }
 
@@ -141,7 +142,7 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        $book = Book::Find($id);
+        $book = Item::Find($id);
 
         //Check if movie exists before deleting
         if (!isset($book)){

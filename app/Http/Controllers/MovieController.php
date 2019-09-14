@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Item;
 use App\Movie;
 use Illuminate\Http\Request;
+use SebastianBergmann\Environment\Runtime;
 
 const OMDBapikey = "f8fca87a";
 
@@ -17,8 +18,8 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $movies = Movie::orderBy('rating','desc')
-            ->where('type', '=', "movie")
+        $movies = Item::orderByMeta('rating','desc')
+            ->where('items.type', "movie")
             ->paginate(12);
         return view('items.movies.browse')->with('movies', $movies);
     }
@@ -46,11 +47,12 @@ class MovieController extends Controller
             'release_year' => 'required'
         ]);
 
-        $userDescribedMovie = Movie::where('title', $request->input('title'))->where('release_year', $request->input('release_year'));
+        $userDescribedMovie = Item::where('title', $request->input('title'))->whereMeta('release_year', $request->input('release_year'));
 
         if($userDescribedMovie->count() < 1){
-            $movie = new Movie;
+            $movie = new Item();
             $movie->user_id = auth()->user()->id;
+            $movie->type = 'movie';
 
             //Retrieve movie information from OMDB and store the values in the '$movie' object
             $ch = curl_init();
@@ -64,22 +66,21 @@ class MovieController extends Controller
             curl_close($ch);
             $retrieved_movie = json_decode($result,true);
 
-            if($statusCode == 200 and $retrieved_movie['Response'] == 'True' /*and $retrieved_movie['Title'] == $request->input('title')*/){
+            if($statusCode == 200 and $retrieved_movie['Response'] == 'True' and $retrieved_movie['Title'] == $request->input('title')){
                 $movie->title = $retrieved_movie['Title'];
                 $movie->description = $retrieved_movie['Plot'];
 
-                $movie->release_year = $request->input('release_year');
-                $movie->rating = (float) $movie->get_string_between('START'.$retrieved_movie['Ratings'][0]['Value'], 'START', '/');
-                $movie->runtime = (int) $movie->get_string_between('START'.$retrieved_movie['Runtime'], 'START', ' min');
-                $movie->genre = $retrieved_movie['Genre'];
-                $movie->director = $retrieved_movie['Director'];
-                $movie->writers = $retrieved_movie['Writer'];
-                $movie->actors = $retrieved_movie['Actors'];
-
-                $movie->movie_cover = $retrieved_movie['Poster'];
-
-
                 $movie->save();
+
+                $movie->setMeta('release_year', $retrieved_movie['Year']);
+                $movie->setMeta('rating', (float) $movie->get_string_between('START'.$retrieved_movie['Ratings'][0]['Value'], 'START', '/'));
+                $movie->setMeta('runtime', (int) $movie->get_string_between('START'.$retrieved_movie['Runtime'], 'START', ' min'));
+                $movie->setMeta('genre', $retrieved_movie['Genre']);
+                $movie->setMeta('director', $retrieved_movie['Director']);
+                $movie->setMeta('writers', $retrieved_movie['Writer']);
+                $movie->setMeta('actors', $retrieved_movie['Actors']);
+
+                $movie->setMeta('movie_cover', $retrieved_movie['Poster']);
 
                 return redirect('/')->with('success', $movie->title.' Added');
 
@@ -99,7 +100,7 @@ class MovieController extends Controller
      */
     public function show($id)
     {
-        $movie = Movie::find($id);
+        $movie = Item::find($id);
         return view('items.movies.show')->with('movie', $movie);
     }
 
@@ -134,7 +135,7 @@ class MovieController extends Controller
      */
     public function destroy($id)
     {
-        $movie = Movie::Find($id);
+        $movie = Item::Find($id);
 
         //Check if movie exists before deleting
         if (!isset($movie)){

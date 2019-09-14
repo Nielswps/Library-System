@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Book;
 use App\Item;
-use App\Jobs\ProcessSearch;
-use App\Movie;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 
 class SearchController extends Controller
 {
@@ -23,22 +19,27 @@ class SearchController extends Controller
     {
         $search = $request->input('search', '');
         $filters =  ['genre' => $request->input('genre', 'All'), 'rating' => $request->input('lowestRating', 0), 'search' => $search];
-        $movies = Movie::orderBy('created_at','desc')
-            ->where('type', '=', "movie")
-            ->where('rating', '>', $filters['rating'])
+        $movies = Item::orderBy('created_at','desc')
+            ->where('type', 'movie')
+            ->whereMeta('rating', '>', $filters['rating'])
             ->where(function ($filterResults) use ($filters) {
                 if($filters['genre'] != 'All'){
-                    $filterResults->where('genre', 'LIKE', '%'.$filters['genre'].'%');
+                    $filterResults->whereMeta('genre', 'LIKE', '%'.$filters['genre'].'%');
+                }
+            })
+            ->where(function($searchResults) use ($search) {
+                if($search != ''){
+                    $searchResults->where('title', 'LIKE', '%'.$search.'%');
                 }
             })
             ->where(function($searchResults) use ($search) {
                 if($search != ''){
 
                     //The columns variable contains every column to be search for the search string
-                    $columns = ['title', 'director', 'writers', 'actors'];
+                    $columns = ['director', 'writers', 'actors'];
                     foreach ($columns as $column)
                     {
-                        $searchResults->orWhere($column, 'LIKE', '%'.$search.'%');
+                        $searchResults->orWhereMeta($column, 'LIKE', '%'.$search.'%');
                     }
                 }
             })
@@ -56,18 +57,17 @@ class SearchController extends Controller
     {
         $search = $request->input('search', '');
         $filters =  ['writer' => $request->input('writer', ''), 'release_year' => $request->input('release_year', ''), 'search' => $search];
-        $books = Book::orderBy('created_at','desc')
-            ->where('type', '=', "book")
-            ->where('release_year', '=', $filters['release_year'])
+        $books = Item::orderBy('created_at','desc')
+            ->where('type', 'book')
+            ->whereMeta('release_year', $filters['release_year'])
             ->where(function($searchResults) use ($search) {
                 if($search != ''){
-
-                    //The columns variable contains every column to be search for the search string
-                    $columns = ['title', 'writers'];
-                    foreach ($columns as $column)
-                    {
-                        $searchResults->orWhere($column, 'LIKE', '%'.$search.'%');
-                    }
+                    $searchResults->where('title', 'LIKE', '%'.$search.'%');
+                }
+            })
+            ->whereMeta(function($searchResults) use ($search) {
+                if($search != ''){
+                    $searchResults->whereMeta('writer', 'LIKE', '%'.$search.'%');
                 }
             })
             ->paginate(12);

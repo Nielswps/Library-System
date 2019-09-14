@@ -14,31 +14,31 @@
             <div class="row align-items-center">
                 <div class="col-xl-3">
                     <div class="img-fluid">
-                        <img class="card-img p-3" src="{{$movie->movie_cover}}">
+                        <img class="card-img p-3" src="{{ $movie->getMeta('movie_cover') }}">
                     </div>
                 </div>
                 <div class="col-1"></div>
                 <div class="col-xl-7">
-                    <h1 class="text-center card-title"><strong>{{$movie->title}}</strong></h1>
+                    <h1 class="text-center card-title"><strong>{{ $movie->title }}</strong></h1>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-5 align-self-center">
-                                <p class="card-text"><strong>Description:</strong><br>{{$movie->description}}</p>
-                                <h4 class="card-text"><strong>Release year:</strong> {{$movie->release_year}}</h4>
-                                <h4 class="card-text"><strong>Rating:</strong> {{$movie->rating}}/10</h4>
-                                <h4 class="card-text"><strong>Runtime:</strong> {{$movie->runtime}} min</h4>
+                                <p class="card-text"><strong>Description:</strong><br>{{ $movie->description }}</p>
+                                <h4 class="card-text"><strong>Release year:</strong> {{ $movie->getMeta('release_year') }}</h4>
+                                <h4 class="card-text"><strong>Rating:</strong> {{ $movie->getMeta('rating') }}/10</h4>
+                                <h4 class="card-text"><strong>Runtime:</strong> {{ $movie->getMeta('runtime') }} min</h4>
                             </div>
                             <div class="border-right"></div>
                             <div class="col-6 align-self-center">
-                                <h5 class="card-text"><strong>Genre:</strong> {{$movie->genre}}</h5>
-                                <h5 class="card-text"><strong>Director:</strong> {{$movie->director}}</h5>
-                                <h5 class="card-text"><strong>Writers:</strong> {{$movie->writers}}</h5>
-                                <h5 class="card-text"><strong>Actors:</strong> {{$movie->actors}}</h5>
+                                <h5 class="card-text"><strong>Genre:</strong> {{ $movie->getMeta('genre') }}</h5>
+                                <h5 class="card-text"><strong>Director:</strong> {{ $movie->getMeta('director') }}</h5>
+                                <h5 class="card-text"><strong>Writers:</strong> {{ $movie->getMeta('writers') }}</h5>
+                                <h5 class="card-text"><strong>Actors:</strong> {{ $movie->getMeta('actors') }}</h5>
                             </div>
                         </div>
                     </div>
                     <div class="text-center">
-                        <p class="card-text text-muted">Last updated: {{$movie->updated_at}}</p>
+                        <p class="card-text text-muted">Last updated: {{ $movie->updated_at }}</p>
                     </div>
                 </div>
             </div>
