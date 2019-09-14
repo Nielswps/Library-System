@@ -21,10 +21,10 @@ class SearchController extends Controller
         $filters =  ['genre' => $request->input('genre', 'All'), 'rating' => $request->input('lowestRating', 0), 'search' => $search];
         $movies = Item::orderBy('created_at','desc')
             ->where('type', 'movie')
-            ->whereMeta('rating', '>', $filters['rating'])
+            ->where('meta->rating', '>', $filters['rating'])
             ->where(function ($filterResults) use ($filters) {
                 if($filters['genre'] != 'All'){
-                    $filterResults->whereMeta('genre', 'LIKE', '%'.$filters['genre'].'%');
+                    $filterResults->where('meta->genre', 'LIKE', '%'.$filters['genre'].'%');
                 }
             })
             ->where(function($searchResults) use ($search) {
@@ -39,7 +39,7 @@ class SearchController extends Controller
                     $columns = ['director', 'writers', 'actors'];
                     foreach ($columns as $column)
                     {
-                        $searchResults->orWhereMeta($column, 'LIKE', '%'.$search.'%');
+                        $searchResults->orWhere('meta->'.$column, 'LIKE', '%'.$search.'%');
                     }
                 }
             })
@@ -59,15 +59,16 @@ class SearchController extends Controller
         $filters =  ['writer' => $request->input('writer', ''), 'release_year' => $request->input('release_year', ''), 'search' => $search];
         $books = Item::orderBy('created_at','desc')
             ->where('type', 'book')
-            ->whereMeta('release_year', $filters['release_year'])
+            ->where('meta->release_year', $filters['release_year'])
             ->where(function($searchResults) use ($search) {
                 if($search != ''){
-                    $searchResults->where('title', 'LIKE', '%'.$search.'%');
-                }
-            })
-            ->whereMeta(function($searchResults) use ($search) {
-                if($search != ''){
-                    $searchResults->whereMeta('writer', 'LIKE', '%'.$search.'%');
+
+                    //The columns variable contains every column to be search for the search string
+                    $columns = ['title', 'meta->writer'];
+                    foreach ($columns as $column)
+                    {
+                        $searchResults->orWhere($column, 'LIKE', '%'.$search.'%');
+                    }
                 }
             })
             ->paginate(12);
