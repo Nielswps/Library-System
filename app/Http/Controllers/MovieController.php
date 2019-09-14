@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Item;
 use Illuminate\Http\Request;
-use SebastianBergmann\Environment\Runtime;
-
-const OMDBapikey = "f8fca87a";
 
 class MovieController extends Controller
 {
@@ -17,7 +14,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $movies = Item::orderByMeta('rating','desc')
+        $movies = Item::orderBy('meta->rating','desc')
             ->where('items.type', "movie")
             ->paginate(12);
         return view('items.movies.browse')->with('movies', $movies);
@@ -46,7 +43,7 @@ class MovieController extends Controller
             'release_year' => 'required'
         ]);
 
-        $userDescribedMovie = Item::where('title', $request->input('title'))->whereMeta('release_year', $request->input('release_year'));
+        $userDescribedMovie = Item::where('title', $request->input('title'))->where('meta->release_year', $request->input('release_year'));
 
         if($userDescribedMovie->count() < 1){
             $movie = new Item();
@@ -59,7 +56,7 @@ class MovieController extends Controller
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_URL, 'http://www.omdbapi.com/?apikey='.OMDBapikey.'&t='.str_replace(' ', '+', $request->input('title').'&y='.$request->input('release_year')).'&plot=full');
+            curl_setopt($ch, CURLOPT_URL, 'http://www.omdbapi.com/?apikey='.env('OMDB_APIKEY').'&t='.str_replace(' ', '+', $request->input('title').'&y='.$request->input('release_year')).'&plot=full');
             $result = curl_exec($ch);
             $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
@@ -71,8 +68,8 @@ class MovieController extends Controller
 
                 $meta = array(
                     'release_year' => $retrieved_movie['Year'],
-                    'rating' => (float) $movie->get_string_between('START'.$retrieved_movie['Ratings'][0]['Value'], 'START', '/'),
-                    'runtime' => (int) $movie->get_string_between('START'.$retrieved_movie['Runtime'], 'START', ' min'),
+                    'rating' => (float) explode('/', $retrieved_movie['Ratings'][0]['Value'])[0],
+                    'runtime' => (int) explode(' ', $retrieved_movie['Runtime'])[0],
                     'genre' => $retrieved_movie['Genre'],
                     'director' => $retrieved_movie['Director'],
                     'writers' => $retrieved_movie['Writer'],
