@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Item;
-use App\Movie;
 use Illuminate\Http\Request;
 use SebastianBergmann\Environment\Runtime;
 
@@ -70,17 +69,21 @@ class MovieController extends Controller
                 $movie->title = $retrieved_movie['Title'];
                 $movie->description = $retrieved_movie['Plot'];
 
+                $meta = array(
+                    'release_year' => $retrieved_movie['Year'],
+                    'rating' => (float) $movie->get_string_between('START'.$retrieved_movie['Ratings'][0]['Value'], 'START', '/'),
+                    'runtime' => (int) $movie->get_string_between('START'.$retrieved_movie['Runtime'], 'START', ' min'),
+                    'genre' => $retrieved_movie['Genre'],
+                    'director' => $retrieved_movie['Director'],
+                    'writers' => $retrieved_movie['Writer'],
+                    'actors' => $retrieved_movie['Actors'],
+                    'movie_cover' => $retrieved_movie['Poster']
+                );
+
+                $meta = json_encode($meta);
+                $movie->meta = $meta;
+
                 $movie->save();
-
-                $movie->setMeta('release_year', $retrieved_movie['Year']);
-                $movie->setMeta('rating', (float) $movie->get_string_between('START'.$retrieved_movie['Ratings'][0]['Value'], 'START', '/'));
-                $movie->setMeta('runtime', (int) $movie->get_string_between('START'.$retrieved_movie['Runtime'], 'START', ' min'));
-                $movie->setMeta('genre', $retrieved_movie['Genre']);
-                $movie->setMeta('director', $retrieved_movie['Director']);
-                $movie->setMeta('writers', $retrieved_movie['Writer']);
-                $movie->setMeta('actors', $retrieved_movie['Actors']);
-
-                $movie->setMeta('movie_cover', $retrieved_movie['Poster']);
 
                 return redirect('/')->with('success', $movie->title.' Added');
 

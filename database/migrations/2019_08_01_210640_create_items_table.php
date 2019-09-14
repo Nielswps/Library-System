@@ -21,6 +21,7 @@ class CreateItemsTable extends Migration
             $table->enum('type', ['movie', 'book', 'cd']);
             $table->string('title');
             $table->mediumText('description');
+            $table->json('meta')->nullable();
             $table->integer('user_id');
             $table->timestamps();
 
