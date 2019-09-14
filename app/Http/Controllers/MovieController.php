@@ -68,7 +68,7 @@ class MovieController extends Controller
 
                 $meta = array(
                     'release_year' => $retrieved_movie['Year'],
-                    'rating' => (float) explode('/', $retrieved_movie['Ratings'][0]['Value'])[0],
+                    'rating' => (float) (empty($retrieved_movie['Ratings']) ? 0 : (float) explode('/', $retrieved_movie['Ratings'][0]['Value'])[0]),
                     'runtime' => (int) explode(' ', $retrieved_movie['Runtime'])[0],
                     'genre' => $retrieved_movie['Genre'],
                     'director' => $retrieved_movie['Director'],
