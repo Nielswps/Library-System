@@ -17,7 +17,7 @@ class CreateItemsTable extends Migration
             /**General columns for all item types*/
             $table->bigIncrements('id');
 
-            /**Type of item. For more item types, simply add a new type to the array**/
+            /**Type of items. For more item types, simply add a new type to the array**/
             $table->enum('type', ['movie', 'book', 'cd']);
             $table->string('title');
             $table->mediumText('description');

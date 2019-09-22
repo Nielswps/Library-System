@@ -14,7 +14,7 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::orderBy('created_at','desc')
+        $books = Item::orderBy('created_at','desc')
             ->where('items.type', "book")
             ->paginate(12);
         return view('items.books.browse')->with('books', $books);
@@ -39,24 +39,44 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required',
-            'writer' => 'required'
+            'title' => 'required_without:fileUpload',
+            'writer' => 'required_without:fileUpload'
         ]);
+        if($request->hasFile('fileUpload') and $request->file('fileUpload')->getClientOriginalExtension() == 'csv'){
+            $books = array_map('str_getcsv', $request->file('fileUpload'));
+            foreach ($books as $book){
+                $book = new Item();
+                $book->title = $request->input('title');
+                $meta = array(
+                    'writer' => $request->input('writer')
+                );
 
-        $book = new Item();
-        $book->title = $request->input('title');
-        $meta = array(
-            'writer' => $request->input('writer')
-        );
+                $meta = json_encode($meta);
+                $book->meta = $meta;
 
-        $meta = json_encode($meta);
-        $book->meta = $meta;
+                $book->user_id = auth()->user()->id;
 
-        $book->user_id = auth()->user()->id;
+                $book->save();
+            }
 
-        $book->save();
+            return redirect('/')->with('success', 'Books added');
 
-        return redirect('/')->with('success', $book->title.' Added');
+        } else{
+            $book = new Item();
+            $book->title = $request->input('title');
+            $meta = array(
+                'writer' => $request->input('writer')
+            );
+
+            $meta = json_encode($meta);
+            $book->meta = $meta;
+
+            $book->user_id = auth()->user()->id;
+
+            $book->save();
+
+            return redirect('/')->with('success', $book->title.' Added');
+        }
     }
 
     /**
