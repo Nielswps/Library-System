@@ -19,11 +19,15 @@
             <button class="btn btn-light col-12 mb-4" type="button" data-toggle="collapse" href="#fileAdd" aria-expanded="false" aria-controls="filters"><h2>Add list of books with CSV-file</h2></button>
             <div class="collapse col-12 mb-4" id="fileAdd">
                 <div class="form-group row">
-                    <input class="custom-file-input col-11" type="file" name="fileUpload" id="fileUpload">
                     <label class="custom-file-label col-11" for="fileUpload">Upload CSV-file...</label>
+                    <input class="custom-file-input col-11" type="file" name="fileUpload" id="fileUpload" accept="text/csv" placeholder="Upload CSV-file...">
                     <a class="m-auto" data-toggle="collapse" href="#fileFormattingInfo" role="button" aria-expanded="false" aria-controls="fileFormattingInfo">?</a>
                     <div class="collapse card card-body" aria-labelledby="fileFormattingInfo" id="fileFormattingInfo">
-                        <p class="pr-0 mr-0">The formatting of the file</p>
+                        <p class="pr-0 mr-0">
+                            The uploaded file has to be a .CSV-file in the format:<br>
+                            Title, Release Year, Disk type <i><b>optional</b></i><br>
+                            Example: The Godfather, 1972, DVD
+                        </p>
                     </div>
                 </div>
             </div>

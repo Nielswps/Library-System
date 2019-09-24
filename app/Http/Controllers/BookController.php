@@ -43,18 +43,17 @@ class BookController extends Controller
             'writer' => 'required_without:fileUpload'
         ]);
         if($request->hasFile('fileUpload') and $request->file('fileUpload')->getClientOriginalExtension() == 'csv'){
-            $books = array_map('str_getcsv', $request->file('fileUpload'));
-            foreach ($books as $book){
+            $booksFromFile = array_map('str_getcsv', $request->file('fileUpload'));
+            foreach ($booksFromFile as $bookFromFile){
                 $book = new Item();
-                $book->title = $request->input('title');
+                $book->user_id = auth()->user()->id;
+                $book->title = $bookFromFile->title;
                 $meta = array(
-                    'writer' => $request->input('writer')
+                    'writer' => $bookFromFile->writer
                 );
 
                 $meta = json_encode($meta);
                 $book->meta = $meta;
-
-                $book->user_id = auth()->user()->id;
 
                 $book->save();
             }
@@ -124,7 +123,7 @@ class BookController extends Controller
     {
         $book = Item::Find($id);
 
-        //Check if movie exists before deleting
+        //Check if book exists before deleting
         if (!isset($book)){
             return redirect('/books/browse')->with('error', 'Book not Found');
         }

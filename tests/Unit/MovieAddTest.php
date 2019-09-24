@@ -15,6 +15,10 @@ class MovieAddTest extends TestCase
      */
     public function fetchDataForTheGodfatherFromIMDbSuccessfullyWithTitleAndReleaseYear()
     {
+        $title = "The Godfather";
+        $releaseYear = 1972;
+
+
 
         $this->assertTrue(true);
     }
