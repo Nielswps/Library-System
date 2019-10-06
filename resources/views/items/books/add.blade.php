@@ -2,9 +2,14 @@
 
 @section('content')
     <div class="container">
-        <h1>Add Book</h1>
-        <form class="row" method="POST" action="{{ route('store-book') }}" enctype="multipart/form-data">
+        <h1>Add Item</h1>
+        <form class="row" method="POST" action="{{ route('store-item') }}" enctype="multipart/form-data">
             @csrf
+            <label for="itemType">Item type</label>
+            <select class="custom-select" id="itemType" name="itemType">
+                <option value="movie" selected>Movie</option>
+                <option value="book">Book</option>
+            </select>
             <button class="btn btn-light col-12 mb-4" type="button" data-toggle="collapse" href="#normalAdd" aria-expanded="false" aria-controls="filters"><h2>Add book by Title and Writer</h2></button>
             <div class="collapse col-12 mb-4" id="normalAdd">
                 <div class="form-group">
