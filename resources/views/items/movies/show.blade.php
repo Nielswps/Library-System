@@ -7,7 +7,7 @@
                 <div class="dropdown ml-auto">
                     <a class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a href="{{ route('delete-movie', $movie->id) }}" class="btn dropdown-item pr-0 mr-0" onclick="return confirm('Are you sure?')"></a>
+                        <a href="{{ route('delete-movie', $movie->id) }}" class="btn dropdown-item pr-0 mr-0" onclick="return confirm('Are you sure?')">Delete</a>
                     </div>
                 </div>
             </nav>

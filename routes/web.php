@@ -15,6 +15,8 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Auth::routes();
 
+Route::get('search', ['as' => '/search', 'uses' => 'SearchController@search']);
+
 //Routes for movies in the library
 Route::group(['prefix' => 'movies', 'middleware' => 'auth'], function()
 {
@@ -24,7 +26,6 @@ Route::group(['prefix' => 'movies', 'middleware' => 'auth'], function()
     Route::post('update/{id}', 'MovieController@update')->name('update-movie');
     Route::get('delete/{id}', 'MovieController@destroy')->name('delete-movie');
     Route::get('browse', 'MovieController@index')->name('browse-movie');
-    Route::get('search', ['as' => '/movies/search', 'uses' => 'SearchController@movieSearch']);
     Route::get('add', 'MovieController@create');
     Route::get('{id}', 'MovieController@show')->name('show-movie');
     Route::get('/', function () {
@@ -40,9 +41,8 @@ Route::group(['prefix' => 'books', 'middleware' => 'auth'], function()
     Route::get('edit/{id}', 'BookController@edit')->name('edit-book');
     Route::post('update/{id}', 'BookController@update')->name('update-book');
     Route::get('delete/{id}', 'BookController@destroy')->name('delete-book');
-    Route::get('/browse', 'BookController@index')->name('browse-book');
-    Route::get('/search', ['as' => '/books/search', 'uses' => 'SearchController@bookSearch']);
-    Route::get('/add', 'BookController@create');
+    Route::get('browse', 'BookController@index')->name('browse-book');
+    Route::get('add', 'BookController@create');
     Route::get('{id}', 'BookController@show')->name('show-book');
     Route::get('/', function () {
         return redirect('/browse');

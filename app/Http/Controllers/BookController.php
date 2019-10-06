@@ -43,20 +43,26 @@ class BookController extends Controller
             'writer' => 'required_without:fileUpload'
         ]);
         if($request->hasFile('fileUpload') and $request->file('fileUpload')->getClientOriginalExtension() == 'csv'){
-            $booksFromFile = array_map('str_getcsv', $request->file('fileUpload'));
-            foreach ($booksFromFile as $bookFromFile){
-                $book = new Item();
-                $book->user_id = auth()->user()->id;
-                $book->title = $bookFromFile->title;
-                $meta = array(
-                    'writer' => $bookFromFile->writer
-                );
+            $file = fopen($request->file('fileUpload'),"r");
+            while (! feof($file)){
+                $bookFromFile = fgetcsv($file);
+                if(!empty(trim($bookFromFile[0]))){
+                    $book = new Item();
+                    $book->user_id = auth()->user()->id;
+                    $book->type = 'book';
+                    $book->title = ($bookFromFile[0] != null ? $bookFromFile[0] : 'Title');
+                    $book->description = $bookFromFile[0].' is a book';
+                    $meta = array(
+                        'writer' => $bookFromFile[1]
+                    );
 
-                $meta = json_encode($meta);
-                $book->meta = $meta;
+                    $meta = json_encode($meta);
+                    $book->meta = $meta;
 
-                $book->save();
+                    $book->save();
+                }
             }
+            fclose($file);
 
             return redirect('/')->with('success', 'Books added');
 

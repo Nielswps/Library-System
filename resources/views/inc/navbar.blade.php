@@ -1,5 +1,6 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
+        <!-- Left Side Of Navbar -->
         <a class="navbar-brand" href="{{ url('/') }}">
             {{ config('app.name', 'Laravel') }}
         </a>
@@ -9,15 +10,14 @@
         <div class="border-right col-1"></div>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- Left Side Of Navbar -->
+            <!-- Center Of Navbar -->
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" href="/movies/browse" role="button">Browse Movies</a></li>
-                <li class="nav-item"><a class="nav-link" data-toggle="collapse" href="#filtersMovies" aria-expanded="false" aria-controls="filters">Search Movies</a></li>
-                <li class="nav-item"><a class="nav-link" href="/movies/add" role="button">Add Movie</a></li>
-                <div class="border-right"></div>
                 <li class="nav-item"><a class="nav-link" href="/books/browse" role="button">Browse Books</a></li>
-                <li class="nav-item"><a class="nav-link" data-toggle="collapse" href="#filtersBooks" aria-expanded="false" aria-controls="filters">Search Books</a></li>
+                <li class="nav-item"><a class="nav-link" href="/movies/add" role="button">Add Movie</a></li>
                 <li class="nav-item"><a class="nav-link" href="/books/add" role="button">Add Book</a></li>
+                <div class="border-right"></div>
+                <li class="nav-item"><a class="nav-link" data-toggle="collapse" href="#filtersMovies" aria-expanded="false" aria-controls="filters">Search</a></li>
             </ul>
 
             <div class="tab-content" id="filterTabContent">
@@ -66,9 +66,18 @@
 <div class="row">
     <div class="collapse col" id="filtersMovies">
         <div class="card card-body">
-            <form action="{{route('/movies/search')}}" method="GET">
+            <form action="{{route('/search')}}" method="GET">
             @csrf
-                <div class="form-row">
+                <div class="form-row d-flex justify-content-center">
+                    <div class="col-md-1 text-right">
+                        <label class="col-form-label" for="itemType">Item type:</label>
+                    </div>
+                    <div class="col-md-1">
+                        <select class="custom-select" id="itemType" name="itemType">
+                            <option value="movie" selected>Movie</option>
+                            <option value="book">Book</option>
+                        </select>
+                    </div>
                     <div class="col-md-1 text-right">
                         <label class="col-form-label" for="genre">Genre:</label>
                     </div>
@@ -83,7 +92,6 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-1"></div>
                     <div class="col-md-1 text-right">
                         <label class="col-form-label text-center" for="lowestRating">Lowest Rating:</label>
                     </div>
@@ -98,8 +106,7 @@
                             @endfor
                         </select>
                     </div>
-                    <div class="col-md-1"></div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 ml-5">
                         @if(isset($filters['search']))
                             <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search" value="{{$filters['search']}}">
                         @else
@@ -109,29 +116,6 @@
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Search</button>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="collapse col" id="filtersBooks">
-        <div class="card card-body">
-            <form action="{{route('/books/search')}}" method="GET">
-            @csrf
-                <div class="form-row">
-                    <div class="col-md-1"></div>
-                    <div class="col-md-2">
-                        @if(isset($filters['search']))
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search (Title or Writer)" aria-label="Search" name="search" value="{{$filters['search']}}">
-                        @else
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search (Title or Writer)" aria-label="Search" name="search">
-                        @endif
-                    </div>
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Search</button>
-                    </div>
-                    <div class="col-md-1"></div>
                 </div>
             </form>
         </div>

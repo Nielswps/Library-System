@@ -14,7 +14,7 @@ class MovieDataCollector
      * @param string $title
      * @param string $releaseYear
      */
-    public function __construct(string $title, string $releaseYear)
+    public function __construct(string $title, string $releaseYear = '')
     {
         $this->movieTitle = $title;
         $this->movieReleaseYear = $releaseYear;
@@ -67,7 +67,11 @@ class MovieDataCollector
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, 'http://www.omdbapi.com/?apikey='.env('OMDB_APIKEY').'&t='.str_replace(' ', '+', $this->movieTitle).'&y='.$this->movieReleaseYear.'&plot=full');
+        if($this->movieReleaseYear != ''){
+            curl_setopt($ch, CURLOPT_URL, 'http://www.omdbapi.com/?apikey='.env('OMDB_APIKEY').'&t='.str_replace(' ', '+', $this->movieTitle).'&y='.$this->movieReleaseYear.'&plot=full');
+        } else{
+            curl_setopt($ch, CURLOPT_URL, 'http://www.omdbapi.com/?apikey='.env('OMDB_APIKEY').'&t='.str_replace(' ', '+', $this->movieTitle).'&plot=full');
+        }
         $result = curl_exec($ch);
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

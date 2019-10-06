@@ -9,13 +9,22 @@ use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller
 {
+
+    public function search(Request $request){
+        if($request->input('itemType') == 'movie'){
+            $this->movieSearch($request);
+        } else if($request->input('itemType') == 'book'){
+            $this->bookSearch($request);
+        }
+    }
+
     /**
      * Search function for the movie part of the library.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
     **/
-    public function movieSearch(Request $request)
+    private function movieSearch(Request $request)
     {
         $search = $request->input('search', '');
         $filters =  ['genre' => $request->input('genre', 'All'), 'rating' => $request->input('lowestRating', 0), 'search' => $search];
@@ -53,13 +62,12 @@ class SearchController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      **/
-    public function bookSearch(Request $request)
+    private function bookSearch(Request $request)
     {
         $search = $request->input('search', '');
-        $filters =  ['writer' => $request->input('writer', ''), 'release_year' => $request->input('release_year', ''), 'search' => $search];
+        $filters =  ['search' => $search];
         $books = Item::orderBy('created_at','desc')
             ->where('type', 'book')
-            ->where('meta->release_year', $filters['release_year'])
             ->where(function($searchResults) use ($search) {
                 if($search != ''){
 
