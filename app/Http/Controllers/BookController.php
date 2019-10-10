@@ -38,50 +38,7 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'title' => 'required_without:fileUpload',
-            'writer' => 'required_without:fileUpload'
-        ]);
-        if($request->hasFile('fileUpload') and $request->file('fileUpload')->getClientOriginalExtension() == 'csv'){
-            $file = fopen($request->file('fileUpload'),"r");
-            while (! feof($file)){
-                $bookFromFile = fgetcsv($file);
-                if(!empty(trim($bookFromFile[0]))){
-                    $book = new Item();
-                    $book->user_id = auth()->user()->id;
-                    $book->type = 'book';
-                    $book->title = ($bookFromFile[0] != null ? $bookFromFile[0] : 'Title');
-                    $book->description = $bookFromFile[0].' is a book';
-                    $meta = array(
-                        'writer' => $bookFromFile[1]
-                    );
-
-                    $meta = json_encode($meta);
-                    $book->meta = $meta;
-
-                    $book->save();
-                }
-            }
-            fclose($file);
-
-            return redirect('/')->with('success', 'Books added');
-
-        } else{
-            $book = new Item();
-            $book->title = $request->input('title');
-            $meta = array(
-                'writer' => $request->input('writer')
-            );
-
-            $meta = json_encode($meta);
-            $book->meta = $meta;
-
-            $book->user_id = auth()->user()->id;
-
-            $book->save();
-
-            return redirect('/')->with('success', $book->title.' Added');
-        }
+        //
     }
 
     /**

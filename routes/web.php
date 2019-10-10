@@ -16,12 +16,14 @@ Route::get('/', 'HomeController@index')->name('home');
 Auth::routes();
 
 Route::get('search', ['as' => '/search', 'uses' => 'SearchController@search']);
+Route::get('store', function () {
+    Route::post('store', 'MovieController@store')->name('store-movie');
+})->name('store-item');
 
 //Routes for movies in the library
 Route::group(['prefix' => 'movies', 'middleware' => 'auth'], function()
 {
     Route::get('create', 'MovieController@create')->name('create-movie');
-    Route::post('store', 'MovieController@store')->name('store-movie');
     Route::get('edit/{id}', 'MovieController@edit')->name('edit-movie');
     Route::post('update/{id}', 'MovieController@update')->name('update-movie');
     Route::get('delete/{id}', 'MovieController@destroy')->name('delete-movie');

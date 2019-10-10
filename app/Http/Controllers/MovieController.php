@@ -39,27 +39,7 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'title' => 'required_without:fileUpload',
-            'release_year' => 'required_without:fileUpload'
-        ]);
-
-        if($request->hasFile('fileUpload') and $request->file('fileUpload')->getClientOriginalExtension() == 'csv'){
-            $moviesFromFile = array_map('str_getcsv', $request->file('fileUpload'));
-            foreach ($moviesFromFile as $movieFromFile){
-                $movie = (new MovieDataCollector($request->input('title'), $request->input('release_year')))->getMovie();
-                $movie->save();
-            }
-        }
-
-        $userDescribedMovie = Item::where('title', $request->input('title'))->where('meta->release_year', $request->input('release_year'));
-        if ($userDescribedMovie->count() < 1) {
-            $movie = (new MovieDataCollector($request->input('title'), $request->input('release_year')))->getMovie();
-            $movie->save();
-            return redirect('/')->with('success', $movie->title . ' Added');
-        } else{
-            return redirect('/')->with('error', 'Movie already added to library');
-        }
+        //
     }
 
     /**
