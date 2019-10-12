@@ -14,8 +14,7 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" href="/movies/browse" role="button">Browse Movies</a></li>
                 <li class="nav-item"><a class="nav-link" href="/books/browse" role="button">Browse Books</a></li>
-                <li class="nav-item"><a class="nav-link" href="/movies/add" role="button">Add Movie</a></li>
-                <li class="nav-item"><a class="nav-link" href="/books/add" role="button">Add Book</a></li>
+                <li class="nav-item"><a class="nav-link" href="/items/add" role="button">Add Item</a></li>
                 <div class="border-right"></div>
                 <li class="nav-item"><a class="nav-link" data-toggle="collapse" href="#filtersMovies" aria-expanded="false" aria-controls="filters">Search</a></li>
             </ul>
@@ -70,10 +69,10 @@
             @csrf
                 <div class="form-row d-flex justify-content-center">
                     <div class="col-md-1 text-right">
-                        <label class="col-form-label" for="itemType">Item type:</label>
+                        <label class="col-form-label" for="searchItemType">Item type:</label>
                     </div>
                     <div class="col-md-1">
-                        <select class="custom-select" id="itemType" name="itemType">
+                        <select class="custom-select" id="searchItemType" name="searchItemType">
                             <option value="movie" selected>Movie</option>
                             <option value="book">Book</option>
                         </select>

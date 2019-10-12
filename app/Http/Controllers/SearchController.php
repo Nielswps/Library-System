@@ -11,9 +11,9 @@ class SearchController extends Controller
 {
 
     public function search(Request $request){
-        if($request->input('itemType') == 'movie'){
+        if($request->input('searchItemType') == 'movie'){
             $this->movieSearch($request);
-        } else if($request->input('itemType') == 'book'){
+        } else if($request->input('searchItemType') == 'book'){
             $this->bookSearch($request);
         }
     }
