@@ -6,19 +6,19 @@
             @if(isset($movies) and count($movies) > 0)
                 @foreach($movies as $movie)
                     <div class="col-4 p-1">
-                        <div class="card mb-3 col-12 div-link">
+                        <div class="card col-12 div-link">
                             <a class="card-as-link" href="/movies/{{ $movie->id }}">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col-md-4">
                                         <div>
-                                            <img src="{{ $movie->getMeta('movie_cover') }}" class="card-img p-3">
+                                            <img src="{{ $movie->getMeta('movie_cover') }}" class="card-img p-3 movie-cover">
                                         </div>
                                     </div>
                                     <div class="col-md-8">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-8">
-                                                    <h3 class="card-title"><strong>{{ str_pad($movie->title, 40) }}</strong></h3>
+                                                    <h4 class="card-title"><strong>{{ str_pad($movie->title, 40) }}</strong></h4>
                                                 </div>
                                             </div>
                                             <div class="row">
