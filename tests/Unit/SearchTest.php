@@ -16,8 +16,10 @@ class SearchTest extends TestCase
     {
         //Arrange
         $title = 'The Godfather';
+        $release_year = '1972';
 
         //Act
+
 
         //Asset
 

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1>Add Item</h1>
+        <h1 class="mt-4 mb-3">Add Item</h1>
         <form class="row" method="POST" action="{{ route('store-item') }}" enctype="multipart/form-data">
             @csrf
             <div class="col-12 d-flex justify-content-start mb-5">
@@ -11,16 +11,16 @@
                     <option selected disabled>Select item type...</option>
                     <option value="movie">Movie</option>
                     <option value="book">Book</option>
-                </select>4
+                </select>
             </div>
             <div class="container">
 
                 <!--Adding a book-->
-                <div class="itemType book">
-                    <div class="col-12 mb-5">
+                <div class="itemType book mb-5">
+                    <div class="col-12 mb-4">
                         <div class="form-group">
-                            <label for="title">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" placeholder="Example: The Republic">
+                            <label for="book_title">Title</label>
+                            <input type="text" class="form-control" id="book_title" name="book_title" placeholder="Example: The Republic">
                         </div>
                         <div class="form-group">
                             <label for="writer">Writer</label>
@@ -34,35 +34,41 @@
                 </div>
 
                 <!--Adding a movie-->
-                <div class="itemType movie">
+                <div class="itemType movie mb-5">
                     <div class="col-12 mb-4">
                         <div class="form-group">
-                            <label for="title">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" placeholder="Example: The Godfather">
+                            <label for="movie_title">Title</label>
+                            <input type="text" class="form-control" id="movie_title" name="movie_title" placeholder="Example: The Godfather">
                         </div>
+
                         <div class="form-group">
                             <label for="release_year">Release Year</label>
                             <input type="text" class="form-control" id="release_year" name="release_year" placeholder="Example: 1972">
                         </div>
+                        <div class="form-group">
+                            <label for="diskType">Disk Type</label>
+                            <select class="custom-select" id="diskType" name="diskType">
+                                <option value="movie">Blu-Ray</option>
+                                <option value="book">DVD</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
+                <hr class="itemType movie book horizontalDivider">
+
                 <!--Adding any item with CSV-file-->
-                <div class="itemType movie book col-12 mb-4">
+                <div class="itemType movie book col-12 mb-4 mt-5">
                     <div class="form-group row">
                         <label class="custom-file-label col-11" for="fileUpload">Upload CSV-file...</label>
                         <input class="custom-file-input col-11" type="file" name="fileUpload" id="fileUpload" accept="text/csv" placeholder="Upload CSV-file...">
                         <a class="m-auto" data-toggle="collapse" href="#fileFormattingInfo" role="button" aria-expanded="false" aria-controls="fileFormattingInfo">?</a>
                         <div class="collapse card card-body mt-2" aria-labelledby="fileFormattingInfo" id="fileFormattingInfo">
-
-                            <!--Formatting for book-->
                             <p class="itemType book">
                                 <!--The uploaded file has to be a .CSV-file in the format:<br>
                                 Title, Release Year, Disk type <i><b>optional</b></i><br>
                                 Example: The Godfather, 1972, DVD-->
                             </p>
-
-                            <!--Formatting for movie-->
                             <p class="itemType movie">
                                 The uploaded file has to be a .CSV-file in the format:<br>
                                 Title, Release Year, Disk type <i><b>optional</b></i><br>

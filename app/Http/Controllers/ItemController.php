@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreItem;
 use App\Item;
 use App\MovieDataCollector;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\Translation\Tests\StringClass;
+use App\Jobs\TryFetchDataAndStoreMovie;
 
 class ItemController extends Controller
 {
@@ -35,12 +38,14 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreItem $request)
     {
         if($request->input('itemType') == 'movie'){
-            $this->storeMovie($request);
+            return $this->storeMovie($request);
         } elseif($request->input('itemType') == 'book'){
-            $this->storeBook($request);
+            return $this->storeBook($request);
+        } else{
+            return redirect('/')->with('error', 'You have to chose an item type');
         }
     }
 
@@ -91,69 +96,67 @@ class ItemController extends Controller
 
     private function storeMovie(Request $request)
     {
-        try {
-            $this->validate($request, [
-                'title' => 'required_without:fileUpload',
-                'release_year' => 'required_without:fileUpload'
-            ]);
-        } catch (ValidationException $e) {
-            return redirect('/')->with('error', 'Validation failed. Title and release year are required');
-        }
-
-        if ($request->hasFile('fileUpload') and $request->file('fileUpload')->getClientOriginalExtension() == 'csv') {
-            $moviesFromFile = array_map('str_getcsv', $request->file('fileUpload'));
-            foreach ($moviesFromFile as $movieFromFile) {
-                $movie = (new MovieDataCollector($request->input('title'), $request->input('release_year')))->getMovie();
-                $movie->save();
+        if ($request->hasFile('fileUpload')) {
+            if($request->file('fileUpload')->getClientOriginalExtension() == 'csv'){
+                return $this->storeMoviesFromFile($request);
+            } else {
+                return redirect('/items/add')->with('error', 'File must be a CSV-file');
             }
-            return redirect('/')->with('success', 'Added the entire or parts of the list has been added');
-        }
-
-        $userDescribedMovie = Item::where('title', $request->input('title'))->where('meta->release_year', $request->input('release_year'));
-        if ($userDescribedMovie->count() < 1) {
-            $movie = (new MovieDataCollector($request->input('title'), $request->input('release_year')))->getMovie();
-            $movie->type = 'movie';
-            $movie->save();
-            return redirect('/')->with('success', $movie->title . ' Added');
+        } else if (Item::where('title', $request->input('movie_title'))->where('meta->release_year', $request->input('release_year'))->count() < 1) {
+            TryFetchDataAndStoreMovie::dispatch($request);
+            return redirect('/')->with('success', $request->input('movie_title') . ' will be added to the system');
         } else {
             return redirect('/')->with('error', 'Movie already added to library');
         }
     }
 
+    private  function storeMoviesFromFile(Request $request){
+        $file = fopen($request->file('fileUpload'), "r");
+        while(!feof($file)){
+            $movieFromLine = fgetcsv($file);
+            if(!empty(trim($movieFromLine[0]))){
+                TryFetchDataAndStoreMovie::dispatch($request);
+            }
+        }
+        return redirect('/')->with('success', 'The list has been added to a queue and will be added to the system');
+    }
+
     private function storeBook(Request $request){
-        $this->validate($request, [
-            'title' => 'required_without:fileUpload',
-            'writer' => 'required_without:fileUpload'
-        ]);
         if($request->hasFile('fileUpload') and $request->file('fileUpload')->getClientOriginalExtension() == 'csv'){
-            $this->storeBooksFromFile($request);
+            return $this->storeBooksFromFile($request);
         } else{
             $book = new Item();
             $book->type = 'book';
-            $book->title = $request->input('title');
+            $book->title = $request->input('book_title');
             $meta = array(
                 'writer' => $request->input('writer')
             );
-            if(!empty($request->input('description'))){
-                $book->description = $request->input('description');
-            } else {
-                $book->description = $book->title.', written by '.$book->writer;
+
+            if(Item::where('title', $request->input('book_title'))->where('meta->writer', $request->input('writer'))->count() < 1){
+                if(!empty($request->input('description'))){
+                    $book->description = $request->input('description');
+                } else {
+                    $book->description = $book->title.', written by '.$book->writer;
+                }
+
+                $meta = json_encode($meta);
+                $book->meta = $meta;
+
+                $book->user_id = auth()->user()->id;
+
+                $book->save();
+
+                return redirect('/')->with('success', $book->title.' Added');
             }
-
-            $meta = json_encode($meta);
-            $book->meta = $meta;
-
-            $book->user_id = auth()->user()->id;
-
-            $book->save();
-
-            return redirect('/')->with('success', $book->title.' Added');
+            else{
+                return redirect('/')->with('error', 'Book already added to library');
+            }
         }
     }
 
     private function storeBooksFromFile(Request $request){
         $file = fopen($request->file('fileUpload'),"r");
-        while (! feof($file)){
+        while (!feof($file)){
             $bookFromFile = fgetcsv($file);
             if(!empty(trim($bookFromFile[0]))){
                 $book = new Item();

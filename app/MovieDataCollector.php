@@ -3,21 +3,23 @@
 
 namespace App;
 
-
 class MovieDataCollector
 {
     private $movieTitle;
     private $movieReleaseYear;
+    private $movieDiskType;
 
     /**
      * MovieDataCollector constructor.
      * @param string $title
      * @param string $releaseYear
+     * @param string $diskType
      */
-    public function __construct(string $title, string $releaseYear = '')
+    public function __construct(string $title, string $releaseYear = '', string $diskType = 'DVD')
     {
         $this->movieTitle = $title;
         $this->movieReleaseYear = $releaseYear;
+        $this->movieDiskType = $diskType;
     }
 
     /**
@@ -31,7 +33,8 @@ class MovieDataCollector
         $fetchedData = $this->fetchIMDbData();
 
         if ($fetchedData == false) {
-            return redirect('/')->with('error', 'Movie not found at IMDb');
+            $movie->type = 'false';
+            return $movie;
         }
 
         $movie->title = $fetchedData['Title'];
@@ -45,7 +48,8 @@ class MovieDataCollector
             'director' => $fetchedData['Director'],
             'writers' => $fetchedData['Writer'],
             'actors' => $fetchedData['Actors'],
-            'movie_cover' => $fetchedData['Poster']
+            'movie_cover' => $fetchedData['Poster'],
+            'disk_type' => $this->movieDiskType
         );
 
         $meta = json_encode($meta);
