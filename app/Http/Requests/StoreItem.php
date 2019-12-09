@@ -26,12 +26,12 @@ class StoreItem extends FormRequest
     {
         if($this->input('itemType') == 'movie'){
             return [
-                'movie_title' => 'required_without:fileUpload',
-                'release_year' => 'required_without:fileUpload'
+                'movieTitle' => 'required_without:fileUpload',
+                'releaseYear' => 'required_without:fileUpload'
             ];
         } else if($this->input('itemType') == 'book'){
             return [
-                'book_title' => 'required_without:fileUpload',
+                'bookTitle' => 'required_without:fileUpload',
                 'writer' => 'required_without:fileUpload'
             ];
         } else{
@@ -41,9 +41,9 @@ class StoreItem extends FormRequest
     public function messages()
     {
         return [
-            'movie_title.required_without:fileUpload' => 'A title for the movie is required',
-            'release_year.required_without:fileUpload'  => 'A release year for the movie is required',
-            'book_title.required_without:fileUpload' => 'A title for the book is required',
+            'movieTitle.required_without:fileUpload' => 'A title for the movie is required',
+            'releaseYear.required_without:fileUpload'  => 'A release year for the movie is required',
+            'bookTitle.required_without:fileUpload' => 'A title for the book is required',
             'writer.required_without:fileUpload' => 'A writer of the book is required',
         ];
     }

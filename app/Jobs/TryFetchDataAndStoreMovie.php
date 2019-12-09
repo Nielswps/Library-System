@@ -10,21 +10,22 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use phpDocumentor\Reflection\Types\Integer;
 
 class TryFetchDataAndStoreMovie implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $request;
+    private $movie;
 
     /**
      * Create a new job instance.
      *
-     * @param Request $inputRequest
+     * @param Item $inputMovie
      */
-    public function __construct(Request $inputRequest)
+    public function __construct(Item $inputMovie)
     {
-        $this->request = $inputRequest;
+        $this->movie = $inputMovie;
     }
 
     /**
@@ -34,20 +35,12 @@ class TryFetchDataAndStoreMovie implements ShouldQueue
      */
     public function handle()
     {
-        $movie = (new MovieDataCollector($this->request->input('movie_title'), $this->request->input('release_year'), $this->request->input('diskType')))->getMovie();
-        if($movie->type == false){
-            $movie = new Item();
-            $movie->title = $this->request->input('movie_title');
-            $movie->user_id = auth()->user()->id;
-
-            $meta = array(
-                'release_year' => $this->request->input('release_year'),
-                'disk_type' => $this->request->input('diskType')
-            );
-            $meta = json_encode($meta);
-            $movie->meta = $meta;
+        $fetchedMovie = (new MovieDataCollector($this->movie->title, $this->movie->getMeta('releaseYear'), $this->movie->getMeta('diskType')))->getMovie();
+        if($fetchedMovie->type == 'movie'){
+            $this->movie = $fetchedMovie;
+        } else{
+            $this->movie->setMeta('fetched', 'no_data');
         }
-        $movie->type = 'movie';
-        $movie->save();
+        $this->movie->update();
     }
 }

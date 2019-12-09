@@ -41,7 +41,7 @@ class MovieDataCollector
         $movie->description = $fetchedData['Plot'];
 
         $meta = array(
-            'release_year' => $fetchedData['Year'],
+            'releaseYear' => $fetchedData['Year'],
             'rating' => (float)(empty($fetchedData['Ratings']) ? 0 : (float)explode('/', $fetchedData['Ratings'][0]['Value'])[0]),
             'runtime' => (int)explode(' ', $fetchedData['Runtime'])[0],
             'genre' => $fetchedData['Genre'],
@@ -49,7 +49,8 @@ class MovieDataCollector
             'writers' => $fetchedData['Writer'],
             'actors' => $fetchedData['Actors'],
             'movie_cover' => $fetchedData['Poster'],
-            'disk_type' => $this->movieDiskType
+            'diskType' => $this->movieDiskType,
+            'fetched' => true
         );
 
         $meta = json_encode($meta);

@@ -10,8 +10,8 @@
         {{Form::text('title', $movie->title, ['class' => 'form-control', 'placeholder' => 'Title'])}}
     </div>
     <div class="form-group">
-        {{Form::label('release_year', 'Release Year')}}
-        {{Form::text('release_year', $movie->release_year,['class' => 'form-control'])}}
+        {{Form::label('releaseYear', 'Release Year')}}
+        {{Form::text('releaseYear', $movie->releaseYear,['class' => 'form-control'])}}
     </div>
     {{Form::hidden('_method','PUT')}}
     {{Form::submit('Submit', ['class'=>'btn btn-primary'])}}

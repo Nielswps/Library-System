@@ -19,12 +19,12 @@
                 </div>
                 <div class="col-1"></div>
                 <div class="col-xl-7">
-                    <h1 class="text-center card-title"><strong>{{ $movie->title }}</strong></h1>
+                    <h1 class="text-center card-title"><strong>{{ $movie->title }}</strong></h1><label>{{ $movie->getData('fetched') }}</label>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-5 align-self-center">
                                 <p class="card-text"><strong>Description:</strong><br>{{ $movie->description }}</p>
-                                <h4 class="card-text"><strong>Release year:</strong> {{ $movie->getMeta('release_year') }}</h4>
+                                <h4 class="card-text"><strong>Release year:</strong> {{ $movie->getMeta('releaseYear') }}</h4>
                                 <h4 class="card-text"><strong>Rating:</strong> {{ $movie->getMeta('rating') }}/10</h4>
                                 <h4 class="card-text"><strong>Runtime:</strong> {{ $movie->getMeta('runtime') }} min</h4>
                             </div>

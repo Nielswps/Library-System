@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreItem;
 use App\Item;
 use App\MovieDataCollector;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Translation\Tests\StringClass;
@@ -45,7 +46,7 @@ class ItemController extends Controller
         } elseif($request->input('itemType') == 'book'){
             return $this->storeBook($request);
         } else{
-            return redirect('/')->with('error', 'You have to chose an item type');
+            return redirect('/items/add')->with('error', 'You have to chose an item type');
         }
     }
 
@@ -102,9 +103,26 @@ class ItemController extends Controller
             } else {
                 return redirect('/items/add')->with('error', 'File must be a CSV-file');
             }
-        } else if (Item::where('title', $request->input('movie_title'))->where('meta->release_year', $request->input('release_year'))->count() < 1) {
-            TryFetchDataAndStoreMovie::dispatch($request);
-            return redirect('/')->with('success', $request->input('movie_title') . ' will be added to the system');
+        } else if (Item::where('title', $request->input('movieTitle'))->where('meta->releaseYear', $request->input('releaseYear'))->count() < 1) {
+            $movie = new Item();
+            $movie->title = $request->input('movieTitle');
+            $movie->user_id = auth()->user()->id;
+            $movie->description = "This movie has not yet been fetched";
+
+            $meta = array(
+                'releaseYear' => $request->input('releaseYear'),
+                'diskType' => $request->input('diskType'),
+                'fetched' => false
+            );
+
+            $meta = json_encode($meta);
+            $movie->meta = $meta;
+
+            TryFetchDataAndStoreMovie::dispatch($movie);
+
+            $movie->save();
+
+            return redirect('/')->with('success', $request->input('movieTitle') . ' has been added to the system and potential data will be fetched from IMDb at a later time');
         } else {
             return redirect('/')->with('error', 'Movie already added to library');
         }
@@ -115,7 +133,13 @@ class ItemController extends Controller
         while(!feof($file)){
             $movieFromLine = fgetcsv($file);
             if(!empty(trim($movieFromLine[0]))){
-                TryFetchDataAndStoreMovie::dispatch($request);
+                $movie = new Item();
+                $movie->type = 'movie';
+                $movie->title = $movieFromLine[0];
+                $movie->setMeta('releaseYear', $movieFromLine[1]);
+                $movie->setMeta('diskType', $movieFromLine[2]);
+                $movie->setMeta('fetched', false);
+                TryFetchDataAndStoreMovie::dispatch($movie);
             }
         }
         return redirect('/')->with('success', 'The list has been added to a queue and will be added to the system');
@@ -127,12 +151,12 @@ class ItemController extends Controller
         } else{
             $book = new Item();
             $book->type = 'book';
-            $book->title = $request->input('book_title');
+            $book->title = $request->input('bookTitle');
             $meta = array(
                 'writer' => $request->input('writer')
             );
 
-            if(Item::where('title', $request->input('book_title'))->where('meta->writer', $request->input('writer'))->count() < 1){
+            if(Item::where('title', $request->input('bookTitle'))->where('meta->writer', $request->input('writer'))->count() < 1){
                 if(!empty($request->input('description'))){
                     $book->description = $request->input('description');
                 } else {

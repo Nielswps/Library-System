@@ -19,8 +19,8 @@
                 <div class="itemType book mb-5">
                     <div class="col-12 mb-4">
                         <div class="form-group">
-                            <label for="book_title">Title</label>
-                            <input type="text" class="form-control" id="book_title" name="book_title" placeholder="Example: The Republic">
+                            <label for="bookTitle">Title</label>
+                            <input type="text" class="form-control" id="bookTitle" name="bookTitle" placeholder="Example: The Republic">
                         </div>
                         <div class="form-group">
                             <label for="writer">Writer</label>
@@ -37,19 +37,19 @@
                 <div class="itemType movie mb-5">
                     <div class="col-12 mb-4">
                         <div class="form-group">
-                            <label for="movie_title">Title</label>
-                            <input type="text" class="form-control" id="movie_title" name="movie_title" placeholder="Example: The Godfather">
+                            <label for="movieTitle">Title</label>
+                            <input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Example: The Godfather">
                         </div>
 
                         <div class="form-group">
-                            <label for="release_year">Release Year</label>
-                            <input type="text" class="form-control" id="release_year" name="release_year" placeholder="Example: 1972">
+                            <label for="releaseYear">Release Year</label>
+                            <input type="text" class="form-control" id="releaseYear" name="releaseYear" placeholder="Example: 1972">
                         </div>
                         <div class="form-group">
                             <label for="diskType">Disk Type</label>
                             <select class="custom-select" id="diskType" name="diskType">
-                                <option value="movie">Blu-Ray</option>
-                                <option value="book">DVD</option>
+                                <option value="Blue-Ray">Blu-Ray</option>
+                                <option value="DVD">DVD</option>
                             </select>
                         </div>
                     </div>
