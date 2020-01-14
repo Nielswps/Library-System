@@ -15,7 +15,8 @@
         "laravel/framework": "^6.0",
         "laravel/scout": "^7.1",
         "laravel/tinker": "^1.0",
-        "phpunit/phpunit": "^8.3"
+        "phpunit/phpunit": "^8.3",
+        "ext-mysql_xdevapi": "*"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

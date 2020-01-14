@@ -75,9 +75,9 @@
 'Drama','Family','Fantasy','Film Noir','Game-Show','History','Horror','Musical','Music','Mystery','News',
 'Reality-TV','Romance','Sci-Fi','Short','Sport','Talk-Show','Thriller','War','Western'])
 <div class="row">
-    <div class="collapse" id="filtersMovies">
+    <div class="collapse col-12" id="filtersMovies">
         <div class="card card-body">
-            <form action="{{route('/search')}}" method="GET">
+            <form action="{{ route('search') }}" method="GET">
             @csrf
                 <div class="form-row d-flex justify-content-center">
                     <div class="col-md-1 text-right">

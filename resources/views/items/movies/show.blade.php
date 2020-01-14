@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-1"></div>
                 <div class="col-xl-7">
-                    <h1 class="text-center card-title"><strong>{{ $movie->title }}</strong></h1><label>{{ $movie->getData('fetched') }}</label>
+                    <h1 class="text-center card-title"><strong>{{ $movie->title }}</strong><span class="ml-4 badge badge-secondary">{{ $movie->getMeta('fetched') }}</span></h1>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-5 align-self-center">

@@ -136,9 +136,11 @@ class ItemController extends Controller
                 $movie = new Item();
                 $movie->type = 'movie';
                 $movie->title = $movieFromLine[0];
+                $movie->user_id = auth()->user()->id;
                 $movie->setMeta('releaseYear', $movieFromLine[1]);
                 $movie->setMeta('diskType', $movieFromLine[2]);
                 $movie->setMeta('fetched', false);
+                $movie->save();
                 TryFetchDataAndStoreMovie::dispatch($movie);
             }
         }

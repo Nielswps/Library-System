@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use mysql_xdevapi\Exception;
 use phpDocumentor\Reflection\Types\Integer;
 
 class TryFetchDataAndStoreMovie implements ShouldQueue
@@ -35,12 +36,19 @@ class TryFetchDataAndStoreMovie implements ShouldQueue
      */
     public function handle()
     {
-        $fetchedMovie = (new MovieDataCollector($this->movie->title, $this->movie->getMeta('releaseYear'), $this->movie->getMeta('diskType')))->getMovie();
-        if($fetchedMovie->type == 'movie'){
-            $this->movie = $fetchedMovie;
-        } else{
-            $this->movie->setMeta('fetched', 'no_data');
+        try{
+            $fetchedMovie = (new MovieDataCollector($this->movie))->getMovie();
+            if($fetchedMovie->type == 'movie'){
+                $this->movie = $fetchedMovie;
+                $this->movie->setMeta('fetched', 'Data fetched');
+            } else{
+                $fetchedMovie->type = 'movie';
+                $this->movie->setMeta('fetched', 'No data found');
+            }
+            $this->movie->update();
         }
-        $this->movie->update();
+        catch (Exception $exception) {
+            log($exception->getMessage());
+        }
     }
 }

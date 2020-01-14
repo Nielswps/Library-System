@@ -13,9 +13,14 @@
 
 Route::get('/', 'HomeController@index')->name('home');
 
+Route::get('/browse', function () {
+    return redirect('/');
+});;
+
 Auth::routes();
 
-Route::get('search', ['as' => '/search', 'uses' => 'SearchController@search']);
+Route::get('search', 'SearchController@search')->name('search');
+
 Route::post('store', 'ItemController@store')->name('store-item');
 
 Route::group(['prefix' => 'items', 'middleware' => 'auth'], function()

@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container-fluid">
+        <div><p>Hey</p></div>
         <div class="row d-flex justify-content-center">
             @if(isset($books) and count($books) > 0)
                 @foreach($books as $book)
