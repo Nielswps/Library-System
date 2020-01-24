@@ -30,7 +30,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        return view('items.add');
+        return response(view('items.add'));
     }
 
     /**
@@ -42,11 +42,11 @@ class ItemController extends Controller
     public function store(StoreItem $request)
     {
         if($request->input('itemType') == 'movie'){
-            return $this->storeMovie($request);
+            return response($this->storeMovie($request));
         } elseif($request->input('itemType') == 'book'){
-            return $this->storeBook($request);
+            return response($this->storeBook($request));
         } else{
-            return redirect('/items/add')->with('error', 'You have to chose an item type');
+            return response(redirect('/items/add')->with('error', 'You have to chose an item type'));
         }
     }
 
@@ -58,7 +58,14 @@ class ItemController extends Controller
      */
     public function show($id)
     {
-        //
+        $item = Item::find($id);
+        if($item->type = 'movie'){
+            return response(view('items.movies.show')->with('movie', $item));
+        } elseif($item->type = 'book'){
+            return response(view('items.books.show')->with('book', $item));
+        } else{
+            return response(view('layouts.dashboard'));
+        }
     }
 
     /**
@@ -92,7 +99,20 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $item = Item::Find($id);
+
+        //Check if movie exists before deleting
+        if (!isset($item)){
+            return response(redirect('/browse')->with('error', 'Item not Found'));
+        }
+
+        // Check for correct user
+        if(auth()->user()->id !== $item->user_id){
+            return response(redirect('/browse')->with('error', 'Unauthorized Page'));
+        }
+
+        $item->delete();
+        return response(redirect('/browse')->with('success', 'Item Removed'));
     }
 
     private function storeMovie(Request $request)
@@ -112,15 +132,15 @@ class ItemController extends Controller
             $meta = array(
                 'releaseYear' => $request->input('releaseYear'),
                 'diskType' => $request->input('diskType'),
+                'movie_cover' => "N/A",
                 'fetched' => false
             );
 
             $meta = json_encode($meta);
             $movie->meta = $meta;
 
-            TryFetchDataAndStoreMovie::dispatch($movie);
-
             $movie->save();
+            TryFetchDataAndStoreMovie::dispatch($movie);
 
             return redirect('/')->with('success', $request->input('movieTitle') . ' has been added to the system and potential data will be fetched from IMDb at a later time');
         } else {
@@ -140,11 +160,12 @@ class ItemController extends Controller
                 $movie->setMeta('releaseYear', $movieFromLine[1]);
                 $movie->setMeta('diskType', $movieFromLine[2]);
                 $movie->setMeta('fetched', false);
+                $movie->setMeta('movie_cover', "N/A");
                 $movie->save();
                 TryFetchDataAndStoreMovie::dispatch($movie);
             }
         }
-        return redirect('/')->with('success', 'The list has been added to a queue and will be added to the system');
+        return redirect('/')->with('success', 'The list has been added to the system and potential data will be fetched from IMDb at a later time');
     }
 
     private function storeBook(Request $request){

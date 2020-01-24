@@ -49,8 +49,7 @@ class BookController extends Controller
      */
     public function show($id)
     {
-        $book = Item::find($id);
-        return view('items.books.show')->with('book', $book);
+        //
     }
 
     /**
@@ -84,19 +83,6 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        $book = Item::Find($id);
-
-        //Check if book exists before deleting
-        if (!isset($book)){
-            return redirect('/books/browse')->with('error', 'Book not Found');
-        }
-
-        // Check for correct user
-        if(auth()->user()->id !== $book->user_id){
-            return redirect('/books/browse')->with('error', 'Unauthorized Page');
-        }
-
-        $book->delete();
-        return redirect('/books/browse')->with('success', 'Book Removed');
+        //
     }
 }

@@ -11,20 +11,20 @@ class MovieController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $movies = Item::orderBy('meta->rating','desc')
             ->where('items.type', "movie")
-            ->paginate(12);
+            ->get();
         return view('items.movies.browse')->with('movies', $movies);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
@@ -46,12 +46,11 @@ class MovieController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show($id)
     {
-        $movie = Item::find($id);
-        return view('items.movies.show')->with('movie', $movie);
+        //
     }
 
     /**
@@ -81,23 +80,10 @@ class MovieController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function destroy($id)
     {
-        $movie = Item::Find($id);
-
-        //Check if movie exists before deleting
-        if (!isset($movie)){
-            return redirect('/movies/browse')->with('error', 'Movie not Found');
-        }
-
-        // Check for correct user
-        if(auth()->user()->id !== $movie->user_id){
-            return redirect('/movies/browse')->with('error', 'Unauthorized Page');
-        }
-
-        $movie->delete();
-        return redirect('/movies/browse')->with('success', 'Movie Removed');
+        //
     }
 }

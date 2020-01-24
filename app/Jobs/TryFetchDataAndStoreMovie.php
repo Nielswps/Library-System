@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\IDataCollector;
 use App\Item;
 use App\MovieDataCollector;
 use Illuminate\Bus\Queueable;
@@ -18,6 +19,7 @@ class TryFetchDataAndStoreMovie implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $movie;
+    private $dataCollector;
 
     /**
      * Create a new job instance.
@@ -37,13 +39,15 @@ class TryFetchDataAndStoreMovie implements ShouldQueue
     public function handle()
     {
         try{
-            $fetchedMovie = (new MovieDataCollector($this->movie))->getMovie();
+            $fetchedMovie = (new MovieDataCollector($this->movie))->getData();
             if($fetchedMovie->type == 'movie'){
                 $this->movie = $fetchedMovie;
                 $this->movie->setMeta('fetched', 'Data fetched');
             } else{
-                $fetchedMovie->type = 'movie';
+                $this->movie->type = 'movie';
                 $this->movie->setMeta('fetched', 'No data found');
+                $this->movie->setMeta('movie_cover', "N/A");
+                $this->release();
             }
             $this->movie->update();
         }

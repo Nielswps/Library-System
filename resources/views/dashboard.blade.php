@@ -11,7 +11,7 @@
                         <div class="w-100"></div>
                     @endif
                     <div class="card mb-3 col-4 div-link">
-                        <a class="card-as-link" href="/movies/{{ $item->id }}">
+                        <a class="card-as-link" href="/{{ $item->type == 'movie' ? 'movies' : $item->type == 'book' ? 'books' : 'items' }}/{{ $item->id }}">
                             <div class="row no-gutters align-items-center">
                                 <div class="col-md-8">
                                     <div class="card-body">

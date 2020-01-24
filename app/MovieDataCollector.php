@@ -3,7 +3,7 @@
 
 namespace App;
 
-class MovieDataCollector
+class MovieDataCollector implements IDataCollector
 {
     private $movie;
 
@@ -19,7 +19,7 @@ class MovieDataCollector
     /**
      * @return Item|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function getMovie(){
+    public function getData(){
 
         $fetchedData = $this->fetchIMDbData();
 
@@ -40,21 +40,6 @@ class MovieDataCollector
         $this->movie->setMeta('actors', $fetchedData['Actors']);
         $this->movie->setMeta('movie_cover', $fetchedData['Poster']);
 
-        /*$meta = [
-            'releaseYear' => $fetchedData['Year'],
-            'rating' => (float)(empty($fetchedData['Ratings']) ? 0 : (float)explode('/', $fetchedData['Ratings'][0]['Value'])[0]),
-            'runtime' => (int)explode(' ', $fetchedData['Runtime'])[0],
-            'genre' => $fetchedData['Genre'],
-            'director' => $fetchedData['Director'],
-            'writers' => $fetchedData['Writer'],
-            'actors' => $fetchedData['Actors'],
-            'movie_cover' => $fetchedData['Poster'],
-            'diskType' => $this->movie->getMeta('diskType'),
-        ];
-
-        $meta = json_encode($meta);
-        $this->movie->meta = $meta;
-        */
         return $this->movie;
     }
 
@@ -81,11 +66,20 @@ class MovieDataCollector
         curl_close($ch);
         $retrieved_movie = json_decode($result,true);
 
-        if($statusCode == 200 and $retrieved_movie['Response'] == 'True') {
+        if($statusCode == 200 and $retrieved_movie['Response'] == 'True' and abs($retrieved_movie['Year'] - $this->movie->getMeta('releaseYear')) < 3 and $this->titleCloseEnough($this->movie->title, $retrieved_movie['Title'])) {
             return $retrieved_movie;
         } else{
             return false;
         }
 
+    }
+
+    private function titleCloseEnough(string $userInput, string $stringToCompare){
+        $longestTitle = str_word_count($userInput);
+        if(abs(str_word_count($userInput) - str_word_count($stringToCompare)) < 7 and levenshtein(strtolower($userInput), strtolower($stringToCompare)) < $longestTitle - (0.1 * $longestTitle)){
+            return true;
+        } else{
+            return false;
+        }
     }
 }

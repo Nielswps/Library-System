@@ -67,7 +67,7 @@ class SearchController extends Controller
                         $searchResults->orWhere($column, 'LIKE', '%'.$search.'%');
                     }
             })
-            ->paginate(1000);
+            ->get();
         return response(view('items.books.browse')->with('books', $books)->with('filters', $filters));
     }
 }

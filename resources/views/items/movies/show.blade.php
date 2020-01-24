@@ -14,12 +14,13 @@
             <div class="row align-items-center">
                 <div class="col-xl-3">
                     <div class="img-fluid">
-                        <img class="card-img p-3" src="{{ $movie->getMeta('movie_cover') }}">
+                        <img class="card-img p-3 mb-4" src="{{ $movie->getMeta('movie_cover') == "N/A" ? "/storage/no_image_found.png" : $movie->getMeta('movie_cover') }}">
                     </div>
                 </div>
                 <div class="col-1"></div>
                 <div class="col-xl-7">
-                    <h1 class="text-center card-title"><strong>{{ $movie->title }}</strong><span class="ml-4 badge badge-secondary">{{ $movie->getMeta('fetched') }}</span></h1>
+                    <h1 class="text-center card-title ml-3 d-inline-block"><strong>{{ $movie->title }}</strong></h1>
+                    <span class="ml-2 badge badge-secondary align-top">{{ $movie->getMeta('fetched') }}</span>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-5 align-self-center">
