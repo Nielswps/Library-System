@@ -12,8 +12,8 @@
                     <input type="text" class="form-control" id="title" name="title" placeholder="Title">
                 </div>
                 <div class="form-group">
-                    <label for="release_year">Release Year</label>
-                    <input type="text" class="form-control" id="release_year" name="release_year" placeholder="Example: 1999">
+                    <label for="releaseYear">Release Year</label>
+                    <input type="text" class="form-control" id="releaseYear" name="releaseYear" placeholder="Example: 1999">
                 </div>
             </div>
             <button class="btn btn-light col-12 mb-4" type="button" data-toggle="collapse" href="#fileAdd" aria-expanded="false" aria-controls="filters"><h2>Add list of books with CSV-file</h2></button>

@@ -19,8 +19,9 @@ class CreateItemsTable extends Migration
 
             /**Type of items. For more item types, simply add a new type to the array**/
             $table->enum('type', ['movie', 'book', 'cd']);
+
             $table->string('title');
-            $table->mediumText('description');
+            $table->mediumText('description')->nullable();
             $table->json('meta')->nullable();
             $table->integer('user_id');
             $table->timestamps();
